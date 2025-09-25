@@ -7,6 +7,7 @@ import "./globals.css";
 import Navbar from '../components/Layout/Navbar';
 import Footer from '../components/Layout/Footer';
 import { ThemeProvider } from "next-themes";
+import { AppSettingsProvider } from "@/components/Context/appSettingContext";
 
 
 
@@ -35,19 +36,21 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="light">
-        <div className="flex flex-col min-h-screen">
-          {/* Navbar stays at the top */}
-          <Navbar />
+          <AppSettingsProvider>
+            <div className="flex flex-col min-h-screen">
+            {/* Navbar stays at the top */}
+            <Navbar />
 
-          {/* Scrollable content */}
-          <main className="flex-grow w-full pb-16 pt-[50px] md:pt-[120px]"> 
-            {/* add padding-bottom so content doesn't overlap footer */}
-            {children}
-          </main>
+            {/* Scrollable content */}
+            <main className="flex-grow w-full pb-16 pt-[50px] md:pt-[120px]"> 
+              {/* add padding-bottom so content doesn't overlap footer */}
+              {children}
+            </main>
 
-          {/* Fixed Footer */}
-          <Footer />
-        </div>
+            {/* Fixed Footer */}
+            <Footer />
+          </div>
+          </AppSettingsProvider>
         </ThemeProvider>
       </body>
     </html>

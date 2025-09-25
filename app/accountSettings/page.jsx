@@ -116,7 +116,7 @@ export default function ProfileSettingsPage() {
       >
         {/* ================= Profile Header ================= */}
         <div className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* ========== Left Column ========== */}
+          {/* ================= Left Column ================= */}
           {/* Profile Photo Section */}
           <div
             className="p-6 rounded-2xl shadow-lg flex flex-col items-center bg-[var(--background)]"
@@ -138,7 +138,7 @@ export default function ProfileSettingsPage() {
             <p className="text-sm text-[var(--muted-foreground)] mb-4">sophia.patel@email.com</p>
 
             {/* Actions */}
-            <div className="flex flex-col gap-3 w-full md:w-1/2">
+            <div className="flex flex-col gap-3 w-full md:w-[190px]">
               <button
                 onClick={() => setShowUpdatePhotoModal(true)}
                 className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition font-medium"
@@ -147,7 +147,7 @@ export default function ProfileSettingsPage() {
               </button>
               <button
                 onClick={handleDeletePhoto}
-                className="w-full px-4 py-2 rounded-lg text-red-400 border border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition font-medium"
+                className="w-full px-4 py-2 rounded-lg text-red-500 border border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition font-medium"
               >
                 Delete Profile Photo
               </button>
@@ -155,7 +155,7 @@ export default function ProfileSettingsPage() {
           </div>
 
 
-          {/* ========== Right Column ========== */}
+          {/* ================= Right Column ================= */}
           <div
             className="p-6 rounded-2xl shadow-lg md:col-span-2 bg-[var(--background)]"
             style={{ boxShadow: "0 4px 8px var(--shadow-color)" }}
@@ -198,7 +198,7 @@ export default function ProfileSettingsPage() {
           </div> 
         </div>
 
-        {/* ========== Settings Section (Below both) ========== */}
+        {/* ================= Settings Section ================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Email Setting */}
           <EmailSetting/>
@@ -220,7 +220,7 @@ export default function ProfileSettingsPage() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                className="bg-background p-6 rounded-2xl shadow-lg w-full max-w-md relative"
+                className="bg-background p-6 rounded-2xl shadow-lg w-full max-w-md relative mx-4"
               >
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
                   <div className="bg-[var(--background)] p-6 rounded-2xl shadow-lg w-full max-w-md relative"

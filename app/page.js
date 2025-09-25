@@ -1,7 +1,14 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+  const router = useRouter();
+
+  // useEffect(() => {
+  //   router.push("/admin/");
+  // },[])
+
   return (
     <div className="flex-grow w-full overflow-y-auto p-2">
       {/* Content Area */}

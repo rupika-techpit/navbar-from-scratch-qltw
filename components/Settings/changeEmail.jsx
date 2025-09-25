@@ -31,8 +31,6 @@ const [emailStep, setEmailStep] = useState(1);
         </div>
 
         {/* ================= Email Edit Modal ================= */}
-        {/* Email Edit Modal */}
-        {/* Email Edit Modal */}
         <AnimatePresence>
             {isEditingEmail && (
                 <motion.div
@@ -45,7 +43,7 @@ const [emailStep, setEmailStep] = useState(1);
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                         exit={{ scale: 0.9 }}
-                        className="bg-background p-6 rounded-2xl shadow-lg w-full max-w-md relative"
+                        className="bg-background p-6 rounded-2xl shadow-lg w-full max-w-md relative mx-4"
                     >
                         {/* Close button */}
                         <button

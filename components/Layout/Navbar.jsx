@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import profile from "../../public/profileavatar.png";
 import logo from "../../public/truactlogo.png";
@@ -28,6 +29,7 @@ import SearchBar from "../Header/searchbar";
 import { motion, AnimatePresence } from "framer-motion";
 import SubmenuPortal from "../Menu/Submenu";
 import { usePathname } from "next/navigation";
+import { useAppSettings } from "../../components/Context/appSettingContext";
 
 const Page = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -50,6 +52,9 @@ const Page = () => {
   const [submenuPosition, setSubmenuPosition] = useState("right");
   const [parentRect, setParentRect] = useState(null);
   const closeTimeoutRef = useRef(null);
+  const isAdmin = true;
+  const { appName, appNameForMobile} = useAppSettings();
+  console.log(appName, appNameForMobile);
 
   const users = [
     { id: "123", role: "admin" },
@@ -67,7 +72,7 @@ const Page = () => {
   const currentUser = users.find((u) => u.id === userId);
 
   // Check if admin
-  const isAdmin = currentUser?.role === "admin";
+  // const isAdmin = currentUser?.role === "admin";
 
   useEffect(() => {
     setIsSettingsOpen(false); // close whenever route changes
@@ -401,7 +406,7 @@ const Page = () => {
           boxShadow: "0 1px 2px var(--shadow-color)",
         }}
       >
-        {/* === Top Row === */}
+        {/* =============== Header ===============*/}
         <div className="flex items-center justify-between px-6 py-3">
           {/* Logo */}
           <Link href="/home" className="flex items-center space-x-2">
@@ -409,10 +414,10 @@ const Page = () => {
               <Image src={logo} alt="logo" width={100} height={50} />
             </div>
             <span className="font-normal">
-              <span className="block lg:hidden">O.B.A</span> {/* Mobile */}
+              <span className="block lg:hidden">{appNameForMobile}</span> {/* Mobile */}
               <span className="hidden lg:block">
                 {" "}
-                O.B.A - Our Business Application
+                {appName}
               </span>{" "}
               {/* Desktop */}
             </span>
@@ -522,7 +527,7 @@ const Page = () => {
           </div>
         </div>
 
-        {/* === Bottom Nav === */}
+        {/* =============== Menu Bar =============== */}
         <div
           className="hidden md:flex items-center justify-between px-10 py-2 border-t bg-background text-sm font-medium"
           style={{ borderTopColor: "var(--border-top)" }}
@@ -825,7 +830,7 @@ const Page = () => {
           </div>
         </div>
 
-        {/* === Mobile Menu === */}
+        {/* =============== Mobile Menu =============== */}
         {isMobileMenuOpen && (
           <div
             className="md:hidden bg-background px-4 py-4 space-y-4 text-sm font-medium"
@@ -872,7 +877,7 @@ const Page = () => {
                     {/* Only for admin */}
                     {isAdmin && (
                       <Link
-                        href="#"
+                        href="/appSettings"
                         className="flex items-center gap-2 px-4 py-2 hover:bg-[var(--hover-bg)]"
                       >
                         <BadgeAlert className="h-4 w-4 shrink-0" />
