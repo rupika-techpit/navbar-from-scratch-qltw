@@ -12,6 +12,20 @@ export default function AppSettingsPage() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(appName);
   const [tempName2, setTempName2] = useState(appNameForMobile);
+
+  const [colors, setColors] = useState({
+    primary: "#2563eb",   // default blue
+    secondary: "#10b981", // default green
+    tertiary: "#9333ea",  // default purple
+  });
+
+  const handleColorChange = (key, value) => {
+    setColors((prev) => ({ ...prev, [key]: value }));
+    document.documentElement.style.setProperty(`--color-${key}`, value);
+    localStorage.setItem(`app-${key}-color`, value); // persist user choice
+  };
+
+
   
 
   return (
@@ -29,26 +43,39 @@ export default function AppSettingsPage() {
             <Palette className="w-5 h-5" /> Theme Colors
           </h2>
           <p className="text-sm text-[var(--muted-foreground)] mb-4 ml-5">
-            Choose between primary, secondary and Tertiary color theme to match
-            your preference or device settings.
+            Choose your custom primary, secondary and tertiary theme colors.
           </p>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { label: "Primary", color: "bg-blue-600" },
-              { label: "Secondary", color: "bg-green-600" },
-              { label: "Tertiary", color: "bg-purple-600" },
+              { label: "Primary", key: "primary" },
+              { label: "Secondary", key: "secondary" },
+              { label: "Tertiary", key: "tertiary" },
             ].map((item, i) => (
               <div
                 key={i}
-                className="rounded-xl p-4 border flex flex-col items-center justify-center gap-3 cursor-pointer hover:shadow-md transition"
+                className="rounded-xl p-4 border flex flex-col items-center justify-center gap-3 hover:shadow-md transition"
                 style={{ borderColor: "var(--border-color)" }}
               >
-                <div className={`w-16 h-16 rounded-full ${item.color}`} />
+                {/* Color Picker */}
+                <div className="relative w-16 h-16">
+                  <input
+                    type="color"
+                    value={colors[item.key]}
+                    onChange={(e) => handleColorChange(item.key, e.target.value)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div
+                    className="w-16 h-16 rounded-full border shadow-sm"
+                    style={{ backgroundColor: colors[item.key] }}
+                  />
+                </div>
                 <p className="font-medium">{item.label}</p>
               </div>
             ))}
           </div>
         </div>
+
 
         {/* ================== APP NAME-SHORT ================== */}
         <div>
@@ -81,7 +108,7 @@ export default function AppSettingsPage() {
             <Type className="w-5 h-5" /> App Name
           </h2>
           <p className="text-sm text-[var(--muted-foreground)] mb-4 ml-5">
-            You can change your application name anytime for your large device.
+            You can change your application name anytime for your large device (tab and Laptop).
           </p>
           <div
             className="flex items-center justify-between p-4 rounded-xl shadow-sm"
