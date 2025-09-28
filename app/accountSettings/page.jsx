@@ -141,13 +141,13 @@ export default function ProfileSettingsPage() {
             <div className="flex flex-col gap-3 w-full md:w-[190px]">
               <button
                 onClick={() => setShowUpdatePhotoModal(true)}
-                className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition font-medium"
+                className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition font-medium"
               >
                 Update Profile Photo
               </button>
               <button
                 onClick={handleDeletePhoto}
-                className="w-full px-4 py-2 rounded-lg text-red-500 border border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition font-medium"
+                className="w-full px-4 py-2 rounded-lg text-red-700 border border-red-700 hover:bg-red-50 dark:hover:bg-red-500 transition font-medium"
               >
                 Delete Profile Photo
               </button>
@@ -190,7 +190,7 @@ export default function ProfileSettingsPage() {
             <div className="flex justify-end mt-3">
                 <button
                 onClick={() => setIsEditingProfile(true)}
-                className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition font-medium"
+                className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition font-medium"
               >
                 Edit
               </button>

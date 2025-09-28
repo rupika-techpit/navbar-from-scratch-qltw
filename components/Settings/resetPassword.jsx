@@ -52,7 +52,7 @@ export default function PasswordSettings() {
         </div>
         <button
           onClick={() => setIsEditingPassword(true)}
-          className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition"
+          className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition"
         >
           Edit
         </button>
@@ -200,7 +200,7 @@ export default function PasswordSettings() {
                       style={{ borderColor: "var(--border-color)" }}
                     />
                     <button
-                      className="text-blue-600 text-sm mb-4 hover:underline"
+                      className="text-[var(--color-primary)] text-sm mb-4 hover:underline"
                       onClick={() => setForgotFlow(true)}
                     >
                       Forgot Password?
@@ -215,7 +215,7 @@ export default function PasswordSettings() {
                       </button>
                       <button
                         onClick={() => setPasswordStep(2)}
-                        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)]"
                       >
                         Continue
                       </button>
@@ -244,7 +244,7 @@ export default function PasswordSettings() {
                       </button>
                       <button
                         onClick={() => setPasswordStep(3)}
-                        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)]"
                       >
                         Verify
                       </button>
@@ -320,7 +320,7 @@ export default function PasswordSettings() {
                       </button>
                       <button
                         onClick={() => setPasswordStep(2)}
-                        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)]"
                       >
                         Send Code
                       </button>
@@ -349,7 +349,7 @@ export default function PasswordSettings() {
                       </button>
                       <button
                         onClick={() => setPasswordStep(3)}
-                        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                        className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)]"
                       >
                         Verify
                       </button>

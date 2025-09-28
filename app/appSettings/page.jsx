@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Palette, ImageIcon, Type } from "lucide-react";
 import { useAppSettings } from "../../components/Context/appSettingContext";
+import { darkenColor, lightenColor, getContrastText, getBrightness } from "../../utils/color";
+
 
 export default function AppSettingsPage() {
   const { appName, setAppName, appNameForMobile, setAppNameForMobile} = useAppSettings();
@@ -13,21 +15,59 @@ export default function AppSettingsPage() {
   const [tempName, setTempName] = useState(appName);
   const [tempName2, setTempName2] = useState(appNameForMobile);
 
-  const [colors, setColors] = useState({
-    primary: "#2563eb",   // default blue
-    secondary: "#10b981", // default green
-    tertiary: "#9333ea",  // default purple
-  });
+  // Default colors
+  const defaultColors = {
+    primary: "#2563eb",
+    secondary: "#10b981",
+    tertiary: "#9333ea",
+  };
+
+  // Initialize colors from localStorage
+  const [colors, setColors] = useState(defaultColors);
+
+  useEffect(() => {
+    const savedColors = {
+      primary: localStorage.getItem("app-primary-color") || defaultColors.primary,
+      secondary: localStorage.getItem("app-secondary-color") || defaultColors.secondary,
+      tertiary: localStorage.getItem("app-tertiary-color") || defaultColors.tertiary,
+    };
+    setColors(savedColors);
+
+    // Apply all colors and hover dynamically
+    Object.entries(savedColors).forEach(([key, value]) => {
+      applyColor(key, value);
+    });
+  }, []);
+
+  // Apply color to CSS variables
+  const applyColor = (key, value) => {
+    const isDark = document.documentElement.classList.contains("dark");
+    let appliedColor = value;
+    let hoverColor;
+
+    // Adaptive hover based on brightness
+    if (getBrightness(value) > 150) {
+      hoverColor = darkenColor(value, 0.2);
+    } else {
+      hoverColor = lightenColor(value, 0.2);
+    }
+
+    // Dark mode adjustment
+    if (isDark) appliedColor = darkenColor(value, 0.25);
+
+    const onColor = getContrastText(appliedColor);
+
+    document.documentElement.style.setProperty(`--color-${key}`, appliedColor);
+    document.documentElement.style.setProperty(`--color-on-${key}`, onColor);
+    document.documentElement.style.setProperty(`--color-${key}-hover`, hoverColor);
+  };
 
   const handleColorChange = (key, value) => {
     setColors((prev) => ({ ...prev, [key]: value }));
-    document.documentElement.style.setProperty(`--color-${key}`, value);
-    localStorage.setItem(`app-${key}-color`, value); // persist user choice
+    localStorage.setItem(`app-${key}-color`, value);
+    applyColor(key, value);
   };
-
-
   
-
   return (
     <div className="min-h-screen flex justify-center bg-[var(--background)] text-[var(--foreground)]">
       <div
@@ -95,7 +135,7 @@ export default function AppSettingsPage() {
                 setTempName2(appNameForMobile);
                 setIsMobileEditingName(true);
               }}
-              className="px-4 py-1 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition"
+              className="px-4 py-1 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition"
             >
               Change Name
             </button>
@@ -120,7 +160,7 @@ export default function AppSettingsPage() {
                 setTempName(appName);
                 setIsEditingName(true);
               }}
-              className="px-4 py-1 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition"
+              className="px-4 py-1 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition"
             >
               Change Name
             </button>

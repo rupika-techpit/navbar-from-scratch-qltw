@@ -607,7 +607,7 @@ const Page = () => {
                                         setActive(item.name);
                                         setOpenDropdown(null);
                                       }}
-                                      className="flex items-center px-2 py-1 text-sm rounded hover:bg-[var(--hover-bg)]"
+                                      className="flex items-center px-2 py-1 text-sm rounded hover:bg-[var(--color-primary-hover)] text-[var(--color-primary)]"
                                     >
                                       {sub.icon && (
                                         <sub.icon className="h-4 w-4 mr-2 shrink-0 z-50" />

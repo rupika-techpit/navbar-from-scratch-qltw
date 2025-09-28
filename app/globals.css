@@ -17,6 +17,10 @@
   --border-all: #e5e7eb; /* gray-200 for light border */
   --dropdown-shadow: 0 4px 6px rgba(0,0,0,0.1); /* light shadow */
   --unread-bg: #fff7ed; /* orange-50 for light */
+
+   /* 🎨 Primary default (light theme) */
+  --color-primary: #2563eb;
+  --color-on-primary: #ffffff;
 }
 
 /* Dark theme overrides when <html class="dark"> is set */
@@ -32,6 +36,14 @@ html.dark {
   --border-all: #374151; /* gray-700 for dark borer */
   --dropdown-shadow: 0 4px 12px rgba(0,0,0,0.6); /* darker shadow */
   --unread-bg: #374151; /* gray-700 for dark (highlight) */
+
+  /* Custom color defaults */
+  --color-primary: #2563eb; /* blue */
+  --color-on-primary: #ffffff;
+  --color-secondary: #9333ea; /* purple */
+  --color-on-secondary: #ffffff;
+  --color-tertiary: #f97316; /* orange */
+  --color-on-tertiary: #ffffff;
 }
 
 /* Tailwind inline variables */
