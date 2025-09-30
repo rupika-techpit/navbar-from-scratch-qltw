@@ -30,6 +30,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SubmenuPortal from "../Menu/Submenu";
 import { usePathname } from "next/navigation";
 import { useAppSettings } from "../../components/Context/appSettingContext";
+import { darkenColor, lightenColor, getContrastText, getBrightness } from "../../utils/color";
 
 const Page = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -543,8 +544,8 @@ const Page = () => {
                       onClick={() => toggleDropdown(item.name)}
                       className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md max-w-[120px] ${
                         active === item.name
-                          ? "bg-[var(--color-primary-hover)]"
-                          : "hover:bg-[var(--hover-bg)]"
+                          ? "bg-[var(--color-primary-hover)] text-[var(--color-on-primary)]"
+                          : "hover:bg-[var(--color-primary)] hover:text-[var(--color-on-primary)]"
                       }`}
                     >
                       {/* Wrapper for scrolling */}

@@ -3,7 +3,8 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="fixed bottom-0 left-0 w-full bg-background border-t border-gray-200 dark:border-gray-700 py-2 shadow-md flex justify-center gap-20">
+    <footer className="fixed bottom-0 left-0 w-full bg-background border-t py-2 shadow-md flex justify-center gap-20"
+    style={{borderTopColor: "var(--border-top)"}}>
       <div>
         <p className="text-center text-xs text-gray-400">
           © 2025 My App. All rights reserved.
