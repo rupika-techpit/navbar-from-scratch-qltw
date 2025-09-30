@@ -543,7 +543,7 @@ const Page = () => {
                       onClick={() => toggleDropdown(item.name)}
                       className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md max-w-[120px] ${
                         active === item.name
-                          ? "bg-[var(--hover-bg)]"
+                          ? "bg-[var(--color-primary-hover)]"
                           : "hover:bg-[var(--hover-bg)]"
                       }`}
                     >
@@ -607,7 +607,7 @@ const Page = () => {
                                         setActive(item.name);
                                         setOpenDropdown(null);
                                       }}
-                                      className="flex items-center px-2 py-1 text-sm rounded hover:bg-[var(--color-primary-hover)] text-[var(--color-primary)]"
+                                      className="flex items-center px-2 py-1 text-sm rounded hover:bg-[var(--color-primary-hover)]"
                                     >
                                       {sub.icon && (
                                         <sub.icon className="h-4 w-4 mr-2 shrink-0 z-50" />
