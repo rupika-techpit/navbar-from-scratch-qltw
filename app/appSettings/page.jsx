@@ -57,14 +57,19 @@ export default function AppSettingsPage() {
 
     const onColor = getContrastText(appliedColor);
 
+      // 🔹 Apply immediately
     document.documentElement.style.setProperty(`--color-${key}`, appliedColor);
     document.documentElement.style.setProperty(`--color-on-${key}`, onColor);
     document.documentElement.style.setProperty(`--color-${key}-hover`, hoverColor);
+
+    // 🔹 Persist in localStorage (so refresh works)
+    localStorage.setItem(`app-${key}-color`, value);      // base color
+    localStorage.setItem(`app-${key}-on`, onColor);       // text color
+    localStorage.setItem(`app-${key}-hover`, hoverColor); // hover color
   };
 
   const handleColorChange = (key, value) => {
     setColors((prev) => ({ ...prev, [key]: value }));
-    localStorage.setItem(`app-${key}-color`, value);
     applyColor(key, value);
   };
   

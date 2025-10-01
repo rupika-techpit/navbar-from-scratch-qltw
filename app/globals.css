@@ -21,6 +21,7 @@
    /* 🎨 Primary default (light theme) */
   --color-primary: #2563eb;
   --color-on-primary: #ffffff;
+  --color-primary-hover: #2563eb; /* default hover color */
 }
 
 /* Dark theme overrides when <html class="dark"> is set */
