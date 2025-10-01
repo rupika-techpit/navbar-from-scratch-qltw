@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { AppSettingsProvider } from "@/components/Context/appSettingContext";
 import { useEffect } from "react";
 import { darkenColor, lightenColor, getContrastText, getBrightness } from "../utils/color";
+import ThemeAwareLoader from "@/components/Layout/Toploader";
 
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -71,6 +72,7 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="light">
           <AppSettingsProvider>
+            <ThemeAwareLoader/>
             <div className="flex flex-col min-h-screen">
               <Navbar />
               <main className="flex-grow w-full pb-16 pt-[50px] md:pt-[120px]">
