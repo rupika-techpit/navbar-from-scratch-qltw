@@ -9,7 +9,7 @@ import { darkenColor, lightenColor, getContrastText, getBrightness } from "../..
 
 
 export default function AppSettingsPage() {
-  const { appName, setAppName, appNameForMobile, setAppNameForMobile} = useAppSettings();
+  const { appName, setAppName, appNameForMobile, setAppNameForMobile } = useAppSettings();
   const [isMobileEditingName, setIsMobileEditingName] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(appName);
@@ -22,9 +22,13 @@ export default function AppSettingsPage() {
     tertiary: "#9333ea",
   };
 
-  // Initialize colors from localStorage
+  // Applied colors
   const [colors, setColors] = useState(defaultColors);
 
+  // Temporary colors for selection
+  const [tempColors, setTempColors] = useState(defaultColors);
+
+  // Initialize colors from localStorage
   useEffect(() => {
     const savedColors = {
       primary: localStorage.getItem("app-primary-color") || defaultColors.primary,
@@ -32,8 +36,8 @@ export default function AppSettingsPage() {
       tertiary: localStorage.getItem("app-tertiary-color") || defaultColors.tertiary,
     };
     setColors(savedColors);
+    setTempColors(savedColors);
 
-    // Apply all colors and hover dynamically
     Object.entries(savedColors).forEach(([key, value]) => {
       applyColor(key, value);
     });
@@ -45,32 +49,34 @@ export default function AppSettingsPage() {
     let appliedColor = value;
     let hoverColor;
 
-    // Adaptive hover based on brightness
     if (getBrightness(value) > 150) {
       hoverColor = darkenColor(value, 0.2);
     } else {
       hoverColor = lightenColor(value, 0.2);
     }
 
-    // Dark mode adjustment
     if (isDark) appliedColor = darkenColor(value, 0.25);
 
     const onColor = getContrastText(appliedColor);
 
-      // 🔹 Apply immediately
     document.documentElement.style.setProperty(`--color-${key}`, appliedColor);
     document.documentElement.style.setProperty(`--color-on-${key}`, onColor);
     document.documentElement.style.setProperty(`--color-${key}-hover`, hoverColor);
 
-    // 🔹 Persist in localStorage (so refresh works)
-    localStorage.setItem(`app-${key}-color`, value);      // base color
-    localStorage.setItem(`app-${key}-on`, onColor);       // text color
-    localStorage.setItem(`app-${key}-hover`, hoverColor); // hover color
+    localStorage.setItem(`app-${key}-color`, value);
+    localStorage.setItem(`app-${key}-on`, onColor);
+    localStorage.setItem(`app-${key}-hover`, hoverColor);
   };
 
+  // Update temporary color only
   const handleColorChange = (key, value) => {
-    setColors((prev) => ({ ...prev, [key]: value }));
-    applyColor(key, value);
+    setTempColors((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // Save all selected colors
+  const handleSaveColors = () => {
+    Object.entries(tempColors).forEach(([key, value]) => applyColor(key, value));
+    setColors(tempColors);
   };
   
   return (
@@ -91,37 +97,64 @@ export default function AppSettingsPage() {
             Choose your custom primary, secondary and tertiary theme colors.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { label: "Primary", key: "primary" },
-              { label: "Secondary", key: "secondary" },
-              { label: "Tertiary", key: "tertiary" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="rounded-xl p-4 border flex flex-col items-center justify-center gap-3 hover:shadow-md transition"
-                style={{ borderColor: "var(--border-color)" }}
-              >
-                {/* Color Picker */}
-                <div className="relative w-16 h-16">
-                  <input
-                    type="color"
-                    value={colors[item.key]}
-                    onChange={(e) => handleColorChange(item.key, e.target.value)}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  <div
-                    className="w-16 h-16 rounded-full border shadow-sm"
-                    style={{ backgroundColor: colors[item.key] }}
-                  />
+          <div style={{ boxShadow: "0 4px 8px var(--shadow-color)" }} className="p-4 rounded-xl">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { label: "Primary", key: "primary" },
+                { label: "Secondary", key: "secondary" },
+                { label: "Tertiary", key: "tertiary" },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl p-4 border flex flex-col items-center justify-center gap-3 hover:shadow-md transition relative"
+                  style={{ borderColor: "var(--border-color)" }}
+                >
+                  {/* Top-right color preview + hex code */}
+                  <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
+                    <div
+                      className="w-5 h-5 rounded-full border border-gray-300 shadow-sm"
+                      style={{ backgroundColor: tempColors[item.key] }}
+                    />
+                    <div
+                      className="px-1 py-0.5 rounded border bg-[var(--background)] text-[var(--foreground)] text-xs font-mono"
+                      style={{ borderColor: "var(--border-color)" }}
+                    >
+                      {tempColors[item.key].toUpperCase()}
+                    </div>
+                  </div>
+
+                  {/* Color Picker */}
+                  <div className="relative w-16 h-16">
+                    <input
+                      type="color"
+                      value={tempColors[item.key]}
+                      onChange={(e) => handleColorChange(item.key, e.target.value)}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div
+                      className="w-16 h-16 rounded-full border shadow-sm"
+                      style={{ backgroundColor: tempColors[item.key] }}
+                    />
+                  </div>
+
+                  <p className="font-medium">{item.label}</p>
                 </div>
-                <p className="font-medium">{item.label}</p>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Save button */}
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={handleSaveColors}
+                className="px-4 py-1 rounded-lg text-white bg-green-600 hover:bg-green-700 transition"
+              >
+                Save Colors
+              </button>
+            </div>
           </div>
+
         </div>
-
-
+        
         {/* ================== APP NAME-SHORT ================== */}
         <div>
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
