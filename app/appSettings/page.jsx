@@ -1,83 +1,72 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Palette, ImageIcon, Type } from "lucide-react";
+import { X, Palette, Type } from "lucide-react";
 import { useAppSettings } from "../../components/Context/appSettingContext";
-import { darkenColor, lightenColor, getContrastText, getBrightness } from "../../utils/color";
-
+import { useTheme } from "../../components/Context/themeContext";
 
 export default function AppSettingsPage() {
   const { appName, setAppName, appNameForMobile, setAppNameForMobile } = useAppSettings();
+  const { themeColors, updateTheme, loading } = useTheme();
+  
   const [isMobileEditingName, setIsMobileEditingName] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(appName);
   const [tempName2, setTempName2] = useState(appNameForMobile);
+  const [saveStatus, setSaveStatus] = useState({ type: '', message: '' });
 
-  // Default colors
-  const defaultColors = {
-    primary: "#2563eb",
-    secondary: "#10b981",
-    tertiary: "#9333ea",
-  };
+  // Temporary colors for selection - initialized from theme context
+  const [tempColors, setTempColors] = useState(themeColors);
 
-  // Applied colors
-  const [colors, setColors] = useState(defaultColors);
-
-  // Temporary colors for selection
-  const [tempColors, setTempColors] = useState(defaultColors);
-
-  // Initialize colors from localStorage
+  // Update tempColors when themeColors change
   useEffect(() => {
-    const savedColors = {
-      primary: localStorage.getItem("app-primary-color") || defaultColors.primary,
-      secondary: localStorage.getItem("app-secondary-color") || defaultColors.secondary,
-      tertiary: localStorage.getItem("app-tertiary-color") || defaultColors.tertiary,
-    };
-    setColors(savedColors);
-    setTempColors(savedColors);
-
-    Object.entries(savedColors).forEach(([key, value]) => {
-      applyColor(key, value);
-    });
-  }, []);
-
-  // Apply color to CSS variables
-  const applyColor = (key, value) => {
-    const isDark = document.documentElement.classList.contains("dark");
-    let appliedColor = value;
-    let hoverColor;
-
-    if (getBrightness(value) > 150) {
-      hoverColor = darkenColor(value, 0.2);
-    } else {
-      hoverColor = lightenColor(value, 0.2);
+    if (!loading) {
+      setTempColors(themeColors);
     }
-
-    if (isDark) appliedColor = darkenColor(value, 0.25);
-
-    const onColor = getContrastText(appliedColor);
-
-    document.documentElement.style.setProperty(`--color-${key}`, appliedColor);
-    document.documentElement.style.setProperty(`--color-on-${key}`, onColor);
-    document.documentElement.style.setProperty(`--color-${key}-hover`, hoverColor);
-
-    localStorage.setItem(`app-${key}-color`, value);
-    localStorage.setItem(`app-${key}-on`, onColor);
-    localStorage.setItem(`app-${key}-hover`, hoverColor);
-  };
+  }, [themeColors, loading]);
 
   // Update temporary color only
   const handleColorChange = (key, value) => {
     setTempColors((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Save all selected colors
-  const handleSaveColors = () => {
-    Object.entries(tempColors).forEach(([key, value]) => applyColor(key, value));
-    setColors(tempColors);
+  // Save all selected colors to database
+  const handleSaveColors = async () => {
+    try {
+      setSaveStatus({ type: 'loading', message: 'Saving colors...' });
+      
+      const result = await updateTheme(tempColors);
+      
+      if (result.success) {
+        setSaveStatus({ type: 'success', message: 'Colors saved successfully to database!' });
+      } else {
+        setSaveStatus({ type: 'error', message: 'Failed to save colors to database.' });
+      }
+      
+      // Clear status after 3 seconds
+      setTimeout(() => {
+        setSaveStatus({ type: '', message: '' });
+      }, 3000);
+      
+    } catch (error) {
+      setSaveStatus({ type: 'error', message: 'Error saving colors to database.' });
+      setTimeout(() => {
+        setSaveStatus({ type: '', message: '' });
+      }, 3000);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-[var(--background)]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)] mx-auto"></div>
+          <p className="mt-4 text-[var(--foreground)]">Loading theme settings...</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen flex justify-center bg-[var(--background)] text-[var(--foreground)]">
@@ -88,13 +77,31 @@ export default function AppSettingsPage() {
           background: "var(--background)",
         }}
       >
+        {/* Status Message */}
+        {saveStatus.message && (
+          <div
+            className={`p-4 rounded-lg ${
+              saveStatus.type === 'success' 
+                ? 'bg-green-100 text-green-800 border border-green-200' 
+                : saveStatus.type === 'error'
+                ? 'bg-red-100 text-red-800 border border-red-200'
+                : 'bg-blue-100 text-blue-800 border border-blue-200'
+            }`}
+          >
+            {saveStatus.type === 'loading' && (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-800 inline-block mr-2"></div>
+            )}
+            {saveStatus.message}
+          </div>
+        )}
+
         {/* ================== THEME COLORS ================== */}
         <div>
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Palette className="w-5 h-5" /> Theme Colors
           </h2>
           <p className="text-sm text-[var(--muted-foreground)] mb-4 ml-5">
-            Choose your custom primary, secondary and tertiary theme colors.
+            Choose your custom primary, secondary and tertiary theme colors. These will be applied to the entire application for all users.
           </p>
 
           <div style={{ boxShadow: "0 4px 8px var(--shadow-color)" }} className="p-4 rounded-xl">
@@ -146,13 +153,13 @@ export default function AppSettingsPage() {
             <div className="mt-4 flex justify-end">
               <button
                 onClick={handleSaveColors}
-                className="px-4 py-1 rounded-lg text-white bg-green-600 hover:bg-green-700 transition"
+                disabled={saveStatus.type === 'loading'}
+                className="px-4 py-1 rounded-lg text-white bg-green-600 hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Save Colors
+                {saveStatus.type === 'loading' ? 'Saving...' : 'Save Colors'}
               </button>
             </div>
           </div>
-
         </div>
         
         {/* ================== APP NAME-SHORT ================== */}
@@ -205,8 +212,6 @@ export default function AppSettingsPage() {
           </div>
         </div>
       </div>
-
-      {/* ================== MODALS ================== */}
 
       {/* short Name Modal */}
       <AnimatePresence>
