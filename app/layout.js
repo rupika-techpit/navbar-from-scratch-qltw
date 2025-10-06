@@ -32,22 +32,6 @@ function applyStoredColors() {
       if (isDark) appliedColor = darkenColor(stored, 0.25);
     }
 
-    
-
-    // const onColor = getContrastText(appliedColor);
-
-    
-    // document.documentElement.style.setProperty(`--color-on-${key}`, onColor);
-
-    // let hoverColor;
-
-    // // Adaptive hover
-    // if (getBrightness(value) > 150) {
-    //   hoverColor = darkenColor(value, 0.2);
-    // } else {
-    //   hoverColor = lightenColor(value, 0.2);
-    // }
-    // document.documentElement.style.setProperty(`--color-${key}-hover`, hoverColor);
   });
 }
 

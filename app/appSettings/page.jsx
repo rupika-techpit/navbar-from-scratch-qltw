@@ -173,7 +173,7 @@ export default function AppSettingsPage() {
                 setTempName2(appNameForMobile);
                 setIsMobileEditingName(true);
               }}
-              className="px-4 py-1 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition"
+              className="px-4 py-1 rounded-lg bg-[var(--color-secondary)] text-[var(--color-on-secondary)] hover:bg-[var(--color-secondary-hover)] transition"
             >
               Change Name
             </button>
@@ -198,7 +198,7 @@ export default function AppSettingsPage() {
                 setTempName(appName);
                 setIsEditingName(true);
               }}
-              className="px-4 py-1 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition"
+              className="px-4 py-1 rounded-lg bg-[var(--color-secondary)] text-[var(--color-on-secondary)] hover:bg-[var(--color-secondary-hover)] transition"
             >
               Change Name
             </button>

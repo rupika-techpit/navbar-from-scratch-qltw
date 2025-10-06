@@ -23,7 +23,7 @@ const [emailStep, setEmailStep] = useState(1);
             </div>
             <button
                 onClick={() => setIsEditingEmail(true)}
-                className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition"
+                className="px-4 py-2 rounded-lg bg-[var(--color-secondary)] text-[var(--color-on-secondary)] hover:bg-[var(--color-secondary-hover)] transition"
             >
                 Edit
             </button>
@@ -81,7 +81,7 @@ const [emailStep, setEmailStep] = useState(1);
                             </button>
                             <button
                                 onClick={() => setEmailStep(2)}
-                                className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition"
+                                className="px-4 py-2 rounded-lg bg-[var(--color-secondary)] text-[var(--color-on-secondary)] hover:bg-[var(--color-secondary-hover)] transition"
                             >
                                 Continue
                             </button>
@@ -116,7 +116,7 @@ const [emailStep, setEmailStep] = useState(1);
                             </button>
                             <button
                                 onClick={() => setEmailStep(3)}
-                                className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] transition"
+                                className="px-4 py-2 rounded-lg bg-[var(--color-secondary)] text-[var(--color-on-secondary)] hover:bg-[var(--color-secondary-hover)] transition"
                             >
                                 Send Verification Code
                             </button>

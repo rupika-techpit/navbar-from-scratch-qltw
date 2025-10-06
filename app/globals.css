@@ -22,6 +22,12 @@
   --color-primary: #2563eb;
   --color-on-primary: #ffffff;
   --color-primary-hover: #2563eb; /* default hover color */
+   --color-secondary: #9333ea; /* purple */
+  --color-on-secondary: #ffffff;
+  --color-secondar-hover: #9333ea; /* default hover color */
+  --color-tertiary: #f97316; /* orange */
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-hover: #f97316; /* default hover color */
 }
 
 /* Dark theme overrides when <html class="dark"> is set */
@@ -39,12 +45,15 @@ html.dark {
   --unread-bg: #374151; /* gray-700 for dark (highlight) */
 
   /* Custom color defaults */
-  --color-primary: #2563eb; /* blue */
+  --color-primary: #2563eb;
   --color-on-primary: #ffffff;
-  --color-secondary: #9333ea; /* purple */
+  --color-primary-hover: #2563eb; /* default hover color */
+   --color-secondary: #9333ea; /* purple */
   --color-on-secondary: #ffffff;
+  --color-secondar-hover: #9333ea; /* default hover color */
   --color-tertiary: #f97316; /* orange */
   --color-on-tertiary: #ffffff;
+  --color-tertiary-hover: #f97316; /* default hover color */
 }
 
 /* Tailwind inline variables */
@@ -82,11 +91,6 @@ body {
   display: inline-block;
   animation: scroll-text 4s linear infinite;
 }
-
-/* @keyframes scroll-text {
-  0%, 10% { transform: translateX(0); }
-  90%, 100% { transform: translateX(-100%); }
-} */
 
 .auto-scroll {
   display: inline-block;
