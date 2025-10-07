@@ -8,7 +8,7 @@ import { useTheme } from "../../components/Context/themeContext";
 
 export default function AppSettingsPage() {
   const { appName, setAppName, appNameForMobile, setAppNameForMobile } = useAppSettings();
-  const { themeColors, updateTheme, loading } = useTheme();
+  const { themeColors, updateTheme, loading, initialized } = useTheme();
   
   const [isMobileEditingName, setIsMobileEditingName] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -16,15 +16,20 @@ export default function AppSettingsPage() {
   const [tempName2, setTempName2] = useState(appNameForMobile);
   const [saveStatus, setSaveStatus] = useState({ type: '', message: '' });
 
-  // Temporary colors for selection - initialized from theme context
+  // Initialize tempColors with themeColors (which now includes stored values)
   const [tempColors, setTempColors] = useState(themeColors);
 
-  // Update tempColors when themeColors change
+  // Update tempColors when themeColors change and we're initialized
   useEffect(() => {
-    if (!loading) {
+    if (initialized) {
       setTempColors(themeColors);
     }
-  }, [themeColors, loading]);
+  }, [themeColors, initialized]);
+
+  // Safe color access function
+  const getColorValue = (key) => {
+    return tempColors[key] || "#2563eb";
+  };
 
   // Update temporary color only
   const handleColorChange = (key, value) => {
@@ -39,7 +44,7 @@ export default function AppSettingsPage() {
       const result = await updateTheme(tempColors);
       
       if (result.success) {
-        setSaveStatus({ type: 'success', message: 'Colors saved successfully to database!' });
+        setSaveStatus({ type: 'success', message: 'Colors saved successfully!' });
       } else {
         setSaveStatus({ type: 'error', message: 'Failed to save colors to database.' });
       }
@@ -57,7 +62,8 @@ export default function AppSettingsPage() {
     }
   };
 
-  if (loading) {
+  // Show loading only on initial load, not during refreshes
+  if (loading && !initialized) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-[var(--background)]">
         <div className="text-center">
@@ -77,24 +83,6 @@ export default function AppSettingsPage() {
           background: "var(--background)",
         }}
       >
-        {/* Status Message */}
-        {saveStatus.message && (
-          <div
-            className={`p-4 rounded-lg ${
-              saveStatus.type === 'success' 
-                ? 'bg-green-100 text-green-800 border border-green-200' 
-                : saveStatus.type === 'error'
-                ? 'bg-red-100 text-red-800 border border-red-200'
-                : 'bg-blue-100 text-blue-800 border border-blue-200'
-            }`}
-          >
-            {saveStatus.type === 'loading' && (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-800 inline-block mr-2"></div>
-            )}
-            {saveStatus.message}
-          </div>
-        )}
-
         {/* ================== THEME COLORS ================== */}
         <div>
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -120,13 +108,13 @@ export default function AppSettingsPage() {
                   <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
                     <div
                       className="w-5 h-5 rounded-full border border-gray-300 shadow-sm"
-                      style={{ backgroundColor: tempColors[item.key] }}
+                      style={{ backgroundColor: getColorValue(item.key) }}
                     />
                     <div
                       className="px-1 py-0.5 rounded border bg-[var(--background)] text-[var(--foreground)] text-xs font-mono"
                       style={{ borderColor: "var(--border-color)" }}
                     >
-                      {tempColors[item.key].toUpperCase()}
+                      {getColorValue(item.key).toUpperCase()}
                     </div>
                   </div>
 
@@ -134,13 +122,13 @@ export default function AppSettingsPage() {
                   <div className="relative w-16 h-16">
                     <input
                       type="color"
-                      value={tempColors[item.key]}
+                      value={getColorValue(item.key)}
                       onChange={(e) => handleColorChange(item.key, e.target.value)}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                     <div
                       className="w-16 h-16 rounded-full border shadow-sm"
-                      style={{ backgroundColor: tempColors[item.key] }}
+                      style={{ backgroundColor: getColorValue(item.key) }}
                     />
                   </div>
 
@@ -159,6 +147,25 @@ export default function AppSettingsPage() {
                 {saveStatus.type === 'loading' ? 'Saving...' : 'Save Colors'}
               </button>
             </div>
+            {/* Status Message */}
+            {saveStatus.message && (
+              <div
+                className={`${
+                  saveStatus.type === 'success' 
+                    ? 'text-green-800' 
+                    : saveStatus.type === 'error'
+                    ? 'text-red-800'
+                    : ''
+                }`}
+              >
+                {saveStatus.type === 'loading' && (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-800 inline-block mr-2"></div>
+                )}
+                <div className="mt-4 flex justify-end">
+                  {saveStatus.message}
+                </div>
+              </div>
+            )}
           </div>
         </div>
         

@@ -8,91 +8,113 @@ const ThemeContext = createContext();
 // Catalyst API endpoints
 const CATALYST_API = {
   get: "https://first-test-10103020174.development.catalystappsail.com/theme",
-  update:
-    "https://first-test-10103020174.development.catalystappsail.com/theme",
+  update: "https://first-test-10103020174.development.catalystappsail.com/theme",
+};
+
+// Default colors
+const DEFAULT_COLORS = {
+  primary: "#2563eb",
+  secondary: "#9333ea", 
+  tertiary: "#f97316"
 };
 
 export function ThemeProvider({ children }) {
-  const [themeColors, setThemeColors] = useState({
-    primary: "#2563eb",
-    secondary: "#9333ea", 
-    tertiary: "#f97316"
-  });
+  const [themeColors, setThemeColors] = useState(DEFAULT_COLORS);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
 
   // Fetch theme from database on initial load
   useEffect(() => {
     fetchThemeFromDB();
   }, []);
 
+  const getStoredColors = () => {
+    try {
+      // Try to get from localStorage first
+      const savedColors = localStorage.getItem("themeColors");
+      if (savedColors) {
+        const parsedColors = JSON.parse(savedColors);
+        // Validate that we have all required colors
+        if (parsedColors.primary && parsedColors.secondary && parsedColors.tertiary) {
+          return parsedColors;
+        }
+      }
+    } catch (error) {
+      console.error('Error reading stored colors:', error);
+    }
+    return DEFAULT_COLORS;
+  };
+
   const fetchThemeFromDB = async () => {
     try {
       setLoading(true);
+      
+      // Immediately set colors from localStorage to show previous values
+      const storedColors = getStoredColors();
+      setThemeColors(storedColors);
+      applyColors(storedColors);
+
+      // Then fetch from API
       const response = await axios.get(CATALYST_API.get);
       const result = response.data;
 
       console.log("API Response:", result);
       
-      // Extract colors from Catalyst response format
-        if (result && result.length > 0) {
-            const themeData = result[0].Theme_Settings; // Access Theme_Settings object
-            const newColors = {
-            primary: themeData?.primaryColor || "#2563eb",
-            secondary: themeData?.secondaryColor || "#9333ea",
-            tertiary: themeData?.tertiaryColor || "#f97316",
-            };
+      if (result && result.length > 0) {
+        const themeData = result[0].Theme_Settings;
+        
+        const newColors = {
+          primary: themeData?.primaryColor || DEFAULT_COLORS.primary,
+          secondary: themeData?.secondaryColor || DEFAULT_COLORS.secondary,
+          tertiary: themeData?.tertiaryColor || DEFAULT_COLORS.tertiary,
+        };
 
-            console.log("Extracted colors:", newColors);
+        console.log("Extracted colors from API:", newColors);
 
-            setThemeColors(newColors);
-            applyColors(newColors);
-            localStorage.setItem("themeColors", JSON.stringify(newColors));
-
-            return newColors;
+        // Only update if colors are different from stored ones
+        if (JSON.stringify(newColors) !== JSON.stringify(storedColors)) {
+          setThemeColors(newColors);
+          applyColors(newColors);
+          localStorage.setItem("themeColors", JSON.stringify(newColors));
         }
+      }
     } catch (error) {
       console.error('Error fetching theme:', error);
-      // No localStorage fallback - use defaults
-      // Use localStorage fallback
-      const savedColors = localStorage.getItem("themeColors");
-      if (savedColors) {
-        const parsedColors = JSON.parse(savedColors);
-        setThemeColors(parsedColors);
-        applyColors(parsedColors);
-        return parsedColors;
-      }
-      // Use default colors as final fallback
-      applyColors(colors);
+      // Keep using the stored colors (already set above)
+      console.log('Using stored colors due to API error');
     } finally {
       setLoading(false);
+      setInitialized(true);
     }
-    return null;
   };
 
   const updateThemeInDB = async (newColors) => {
-        try {
-        const payload = {
-            primaryColor: newColors.primary,
-            tertiaryColor: newColors.tertiary,
-            secondaryColor: newColors.secondary,
-        };
+    try {
+      // Map frontend keys to backend keys
+      const payload = {
+        primaryColor: newColors.primary,
+        secondaryColor: newColors.secondary,
+        tertiaryColor: newColors.tertiary,
+      };
 
-        // Try POST instead of PATCH
-        const response = await axios.post(CATALYST_API.update, payload);
+      console.log("Sending payload to backend:", payload);
 
-        if (response.data) {
-            console.log("Theme updated successfully in Catalyst");
-            return true;
-        }
-        } catch (error) {
-        console.error("Failed to update theme in API:", error);
+      const response = await axios.post(CATALYST_API.update, payload);
 
-        // Fallback: Store locally and apply changes anyway
-        console.log("Applying theme changes locally...");
-        // return true; // Don't throw error, allow local update
-        }
-        return false;
-    };
+      if (response.data) {
+        console.log("Theme updated successfully in Catalyst");
+        // Update localStorage immediately
+        localStorage.setItem("themeColors", JSON.stringify(newColors));
+        return true;
+      }
+    } catch (error) {
+      console.error("Failed to update theme in API:", error);
+      // Still update localStorage for consistency
+      localStorage.setItem("themeColors", JSON.stringify(newColors));
+      console.log("Applied theme changes locally due to API error");
+    }
+    return false;
+  };
 
   const applyColors = (colors) => {
     Object.entries(colors).forEach(([key, value]) => {
@@ -121,7 +143,7 @@ export function ThemeProvider({ children }) {
     document.documentElement.style.setProperty(`--color-on-${key}`, onColor);
     document.documentElement.style.setProperty(`--color-${key}-hover`, hoverColor);
 
-    // Only use localStorage as temporary cache, not as source of truth
+    // Cache individual colors in localStorage
     localStorage.setItem(`app-${key}-color`, value);
     localStorage.setItem(`app-${key}-on`, onColor);
     localStorage.setItem(`app-${key}-hover`, hoverColor);
@@ -129,14 +151,13 @@ export function ThemeProvider({ children }) {
 
   const updateTheme = async (colors) => {
     try {
-      // Update in database
-      await updateThemeInDB(colors);
-      
-      // Update local state
+      // Update local state and localStorage immediately
       setThemeColors(colors);
-      
-      // Apply colors to CSS
       applyColors(colors);
+      localStorage.setItem("themeColors", JSON.stringify(colors));
+      
+      // Then update in database (fire and forget)
+      updateThemeInDB(colors);
       
       return { success: true };
     } catch (error) {
@@ -149,6 +170,7 @@ export function ThemeProvider({ children }) {
     themeColors,
     updateTheme,
     loading,
+    initialized,
     refreshTheme: fetchThemeFromDB
   };
 
